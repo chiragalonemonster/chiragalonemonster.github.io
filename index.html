@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body.sidebar-open {
+            overflow: hidden;
+        }
+
+        .sidebar {
+            position: fixed;
+            width: 250px;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            left: -250px;
+            transition: left 0.3s ease;
+        }
+
+        .sidebar.open {
+            left: 0;
+        }
+
+        .blur {
+            filter: blur(5px);
+            transition: filter 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+        <!-- Sidebar content goes here -->
+    </div>
+    <div id="content">
+        <button onclick="toggleSidebar()">Toggle Sidebar</button>
+        <script>
+            function toggleSidebar() {
+                const sidebar = document.getElementById('sidebar');
+                const body = document.body;
+                sidebar.classList.toggle('open');
+                body.classList.toggle('sidebar-open');
+                if (sidebar.classList.contains('open')) {
+                    body.classList.add('blur');
+                } else {
+                    body.classList.remove('blur');
+                }
+            }
+        </script>
+    </div>
+</body>
+</html>
