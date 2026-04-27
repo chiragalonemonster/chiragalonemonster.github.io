@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Favicon — Alone Monster Coding Hub -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico"/>
+  <link rel="icon" type="image/png" sizes="512x512" href="/favicon.png"/>
+  <link rel="apple-touch-icon" sizes="192x192" href="/favicon-192.png"/>
+
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Admin Panel — Alone Monster Coding Hub</title>
+  <meta name="description" content="Admin control panel — Alone Monster Coding Hub"/>
+  <meta name="robots" content="noindex,nofollow"/>
+
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <style>
+    :root{
+      --bg:#050509; --bg2:#0c0c14; --bgc:#10101c;
+      --pink:#f72585; --violet:#7209b7; --purple:#3a0ca3; --blue:#4361ee;
+      --green:#00ff88; --cyan:#00d4ff; --gold:#ffb800;
+      --text:#e8e8f0; --muted:#7a7a99;
+      --border:rgba(247,37,133,.18);
+      --tb:60px;
+      --gp:0 0 22px rgba(247,37,133,.45);
+      --gv:0 0 22px rgba(67,97,238,.4);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{
+      font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);
+      min-height:100vh;overflow-x:hidden;
+    }
+
+    /* === Animated background === */
+    .bg-grid{
+      position:fixed;inset:0;z-index:0;pointer-events:none;
+      background-image:
+        linear-gradient(rgba(247,37,133,.04) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(247,37,133,.04) 1px,transparent 1px);
+      background-size:55px 55px;animation:gmove 30s linear infinite;
+    }
+    @keyframes gmove{to{background-position:55px 55px;}}
+    .orb{position:fixed;border-radius:50%;filter:blur(110px);opacity:.22;z-index:0;pointer-events:none;animation:orbf 12s ease-in-out infinite;}
+    .orb1{width:380px;height:380px;background:var(--pink);top:-90px;left:-90px;}
+    .orb2{width:340px;height:340px;background:var(--blue);bottom:-80px;right:-80px;animation-delay:-4s;}
+    .orb3{width:280px;height:280px;background:var(--violet);top:40%;right:30%;animation-delay:-7s;}
+    @keyframes orbf{0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-30px) scale(1.08);}}
+
+    /* === Topbar === */
+    .topbar{
+      position:sticky;top:0;z-index:50;
+      background:rgba(5,5,9,.96);
+      backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+      border-bottom:1px solid var(--border);
+      display:flex;align-items:center;justify-content:space-between;
+      padding:0 28px;height:var(--tb);
+    }
+    .tb-left{
+      font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+      display:flex;align-items:center;gap:10px;
+    }
+    .tb-left .hi{color:var(--pink);}
+    .tb-left .crumb{display:inline-flex;align-items:center;gap:6px;}
+    .tb-btns{display:flex;gap:8px;align-items:center;}
+
+    .btn{
+      font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.84rem;
+      letter-spacing:.8px;border:none;cursor:pointer;border-radius:6px;
+      height:40px;padding:0 18px;transition:all .18s;text-decoration:none;
+      display:inline-flex;align-items:center;gap:7px;white-space:nowrap;
+    }
+    .bo{background:transparent;border:1px solid var(--border);color:var(--muted);}
+    .bo:hover{border-color:var(--pink);color:var(--pink);background:rgba(247,37,133,.06);}
+
+    /* === Container === */
+    .wrap{position:relative;z-index:1;max-width:1280px;margin:0 auto;padding:36px 28px 96px;}
+
+    /* === Hero === */
+    .hero{
+      display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:center;
+      background:linear-gradient(135deg,rgba(247,37,133,.06),rgba(67,97,238,.06));
+      border:1px solid var(--border);border-radius:22px;padding:30px 34px;
+      margin-bottom:30px;position:relative;overflow:hidden;
+      animation:fup .55s both;
+    }
+    .hero::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,transparent,var(--pink),var(--blue),var(--pink),transparent);
+    }
+    @keyframes fup{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:none;}}
+
+    .shield{
+      width:90px;height:90px;border-radius:22px;
+      background:linear-gradient(135deg,var(--pink),var(--violet));
+      display:flex;align-items:center;justify-content:center;
+      box-shadow:0 12px 30px rgba(247,37,133,.45);font-size:2.2rem;color:#fff;
+      flex-shrink:0;
+    }
+
+    .hero-info h1{
+      font-family:'Orbitron',monospace;font-size:1.85rem;font-weight:800;
+      background:linear-gradient(135deg,#fff 35%,var(--pink));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      letter-spacing:.5px;margin-bottom:6px;
+    }
+    .hero-info .meta{
+      font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--muted);
+      margin-bottom:12px;
+    }
+    .hero-tags{display:flex;gap:8px;flex-wrap:wrap;}
+    .ptag{
+      font-family:'JetBrains Mono',monospace;font-size:.66rem;
+      padding:5px 12px;border-radius:50px;letter-spacing:1px;
+      text-transform:uppercase;font-weight:700;
+    }
+    .ptag.pink{background:rgba(247,37,133,.12);border:1px solid rgba(247,37,133,.4);color:var(--pink);}
+    .ptag.blue{background:rgba(67,97,238,.12);border:1px solid rgba(67,97,238,.4);color:var(--blue);}
+    .ptag.gold{background:rgba(255,184,0,.12);border:1px solid rgba(255,184,0,.4);color:var(--gold);}
+
+    .hero-actions{display:flex;flex-direction:column;gap:9px;align-items:flex-end;}
+    .since-pill{
+      display:inline-flex;align-items:center;gap:8px;padding:9px 16px;
+      background:linear-gradient(135deg,rgba(247,37,133,.16),rgba(114,9,183,.16));
+      border:1px solid rgba(247,37,133,.4);border-radius:50px;
+      font-family:'JetBrains Mono',monospace;font-size:.76rem;color:var(--pink);
+    }
+    .since-pill i{color:#fff;}
+
+    /* === Stats grid === */
+    .stats-grid{
+      display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+      gap:16px;margin-bottom:30px;
+    }
+    .stat-card{
+      background:var(--bg2);border:1px solid var(--border);border-radius:14px;
+      padding:20px 22px;transition:all .25s;position:relative;overflow:hidden;
+    }
+    .stat-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:var(--pink);}
+    .stat-card.blue::before{background:var(--blue);}
+    .stat-card.gold::before{background:var(--gold);}
+    .stat-card.green::before{background:var(--green);}
+    .stat-card:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(247,37,133,.12);border-color:rgba(247,37,133,.4);}
+    .stat-card .ico{font-size:1.4rem;color:var(--pink);margin-bottom:10px;}
+    .stat-card.blue .ico{color:var(--blue);}
+    .stat-card.gold .ico{color:var(--gold);}
+    .stat-card.green .ico{color:var(--green);}
+    .stat-card .num{font-family:'Orbitron',monospace;font-size:1.85rem;font-weight:800;color:var(--text);line-height:1;}
+    .stat-card .lbl{font-family:'JetBrains Mono',monospace;font-size:.66rem;color:var(--muted);margin-top:6px;letter-spacing:1.2px;text-transform:uppercase;}
+    .stat-card .delta{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--green);margin-top:8px;display:inline-flex;align-items:center;gap:4px;}
+    .stat-card .delta.down{color:var(--pink);}
+
+    /* === Section title === */
+    .sec-title{
+      font-family:'Orbitron',monospace;font-size:1.05rem;font-weight:700;
+      color:var(--text);margin:34px 0 16px;display:flex;align-items:center;gap:10px;
+    }
+    .sec-title i{color:var(--pink);}
+    .sec-title .tag{
+      font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--muted);
+      font-weight:400;letter-spacing:2px;text-transform:uppercase;margin-left:auto;
+    }
+
+    /* === Feature cards === */
+    .feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;}
+    .feat-card{
+      background:var(--bg2);border:1px solid var(--border);border-radius:16px;
+      padding:22px;transition:all .25s;cursor:pointer;
+      display:flex;flex-direction:column;gap:12px;
+    }
+    .feat-card:hover{transform:translateY(-3px);border-color:var(--pink);box-shadow:0 12px 36px rgba(247,37,133,.12);}
+    .feat-card .head{display:flex;align-items:center;gap:14px;}
+    .feat-card .ico{
+      width:48px;height:48px;border-radius:12px;display:flex;align-items:center;
+      justify-content:center;font-size:1.3rem;color:#fff;flex-shrink:0;
+    }
+    .ico.pink{background:linear-gradient(135deg,var(--pink),var(--violet));}
+    .ico.blue{background:linear-gradient(135deg,var(--blue),#22d3ee);}
+    .ico.gold{background:linear-gradient(135deg,var(--gold),#ff7b00);}
+    .ico.green{background:linear-gradient(135deg,var(--green),#0fb47a);color:#000;}
+    .ico.cyan{background:linear-gradient(135deg,var(--cyan),#0061a8);}
+    .ico.violet{background:linear-gradient(135deg,#8b3cf7,#3a0ca3);}
+    .feat-card .name{font-family:'Orbitron',monospace;font-size:1rem;font-weight:700;color:var(--text);}
+    .feat-card .sub{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--muted);margin-top:3px;}
+    .feat-card .desc{color:var(--muted);font-size:.92rem;line-height:1.55;}
+    .feat-card .open{
+      align-self:flex-start;font-family:'JetBrains Mono',monospace;font-size:.7rem;
+      color:var(--pink);letter-spacing:1.5px;text-transform:uppercase;
+      display:inline-flex;align-items:center;gap:6px;margin-top:auto;
+    }
+
+    /* === Activity log === */
+    .log-card{
+      background:var(--bg2);border:1px solid var(--border);border-radius:16px;
+      overflow:hidden;
+    }
+    .log-row{
+      display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;
+      padding:14px 20px;border-bottom:1px solid rgba(247,37,133,.08);
+    }
+    .log-row:last-child{border-bottom:none;}
+    .log-row .dot{
+      width:34px;height:34px;border-radius:10px;display:flex;align-items:center;
+      justify-content:center;font-size:.85rem;color:#fff;
+      background:linear-gradient(135deg,var(--pink),var(--violet));flex-shrink:0;
+    }
+    .log-row .dot.blue{background:linear-gradient(135deg,var(--blue),#22d3ee);}
+    .log-row .dot.gold{background:linear-gradient(135deg,var(--gold),#ff7b00);}
+    .log-row .dot.green{background:linear-gradient(135deg,var(--green),#0fb47a);color:#000;}
+    .log-row .body{display:flex;flex-direction:column;gap:2px;min-width:0;}
+    .log-row .ttl{color:var(--text);font-size:.95rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .log-row .sub{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .log-row .time{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--muted);white-space:nowrap;}
+
+    /* === Footer === */
+    .foot{
+      margin-top:40px;text-align:center;font-family:'JetBrains Mono',monospace;
+      font-size:.72rem;color:var(--muted);letter-spacing:1px;
+    }
+
+    @media (max-width: 720px){
+      .hero{grid-template-columns:1fr;text-align:center;}
+      .hero-actions{align-items:center;}
+      .shield{margin:0 auto;}
+      .hero-tags{justify-content:center;}
+      .wrap{padding:24px 18px 96px;}
+      .topbar{padding:0 16px;}
+      .tb-left{font-size:.66rem;}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background -->
+  <div class="bg-grid"></div>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="tb-left">
+      <span class="crumb"><i class="fas fa-shield-halved" style="color:var(--pink);"></i> <span class="hi">ADMIN</span> · Control Panel</span>
+    </div>
+    <div class="tb-btns">
+      <a href="index.html" class="btn bo"><i class="fas fa-house"></i> Home</a>
+      <!-- Admin Logout button auto-injected here by admin_logout.js -->
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="shield"><i class="fas fa-user-shield"></i></div>
+      <div class="hero-info">
+        <h1>Welcome, Admin</h1>
+        <div class="meta">Restricted access · Alone Monster Coding Hub</div>
+        <div class="hero-tags">
+          <span class="ptag pink">Full Access</span>
+          <span class="ptag blue">Site Manager</span>
+          <span class="ptag gold">★ Owner Tier</span>
+        </div>
+      </div>
+      <div class="hero-actions">
+        <span class="since-pill"><i class="fas fa-circle-check"></i> <span id="sinceLabel">Session active</span></span>
+      </div>
+    </section>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="ico"><i class="fas fa-users"></i></div>
+        <div class="num" id="statMembers">—</div>
+        <div class="lbl">Total Members</div>
+        <div class="delta"><i class="fas fa-arrow-up"></i> live</div>
+      </div>
+      <div class="stat-card blue">
+        <div class="ico"><i class="fas fa-eye"></i></div>
+        <div class="num" id="statViews">—</div>
+        <div class="lbl">Page Views (24h)</div>
+        <div class="delta"><i class="fas fa-arrow-up"></i> tracking</div>
+      </div>
+      <div class="stat-card gold">
+        <div class="ico"><i class="fas fa-book-open"></i></div>
+        <div class="num">3</div>
+        <div class="lbl">Active Courses</div>
+        <div class="delta"><i class="fas fa-circle"></i> all live</div>
+      </div>
+      <div class="stat-card green">
+        <div class="ico"><i class="fas fa-bolt"></i></div>
+        <div class="num">100%</div>
+        <div class="lbl">Site Health</div>
+        <div class="delta"><i class="fas fa-check"></i> operational</div>
+      </div>
+    </div>
+
+    <!-- Admin Tools -->
+    <h2 class="sec-title">
+      <i class="fas fa-toolbox"></i> Admin Tools
+      <span class="tag">/ admin · rights</span>
+    </h2>
+
+    <div class="feat-grid">
+      <div class="feat-card" onclick="comingSoon('Members')">
+        <div class="head">
+          <div class="ico pink"><i class="fas fa-users-gear"></i></div>
+          <div>
+            <div class="name">Manage Members</div>
+            <div class="sub">view · ban · promote</div>
+          </div>
+        </div>
+        <p class="desc">Saare registered members ki list dekho, role badlo, ya account suspend karo.</p>
+        <span class="open">Open <i class="fas fa-arrow-right"></i></span>
+      </div>
+
+      <div class="feat-card" onclick="comingSoon('Courses')">
+        <div class="head">
+          <div class="ico blue"><i class="fas fa-book-bookmark"></i></div>
+          <div>
+            <div class="name">Course Manager</div>
+            <div class="sub">create · edit · publish</div>
+          </div>
+        </div>
+        <p class="desc">HTML/CSS, Python, JavaScript courses ke chapters add karo, edit karo aur publish karo.</p>
+        <span class="open">Open <i class="fas fa-arrow-right"></i></span>
+      </div>
+
+      <div class="feat-card" onclick="comingSoon('Announcements')">
+        <div class="head">
+          <div class="ico gold"><i class="fas fa-bullhorn"></i></div>
+          <div>
+            <div class="name">Announcements</div>
+            <div class="sub">site-wide notices</div>
+          </div>
+        </div>
+        <p class="desc">Members ko nayi feature, event ya update ke baare mein notification bhejo.</p>
+        <span class="open">Open <i class="fas fa-arrow-right"></i></span>
+      </div>
+
+      <div class="feat-card" onclick="comingSoon('Analytics')">
+        <div class="head">
+          <div class="ico cyan"><i class="fas fa-chart-line"></i></div>
+          <div>
+            <div class="name">Analytics</div>
+            <div class="sub">traffic · engagement</div>
+          </div>
+        </div>
+        <p class="desc">Site traffic, popular pages aur learner progress ka real-time dashboard.</p>
+        <span class="open">Open <i class="fas fa-arrow-right"></i></span>
+      </div>
+
+      <div class="feat-card" onclick="comingSoon('AI Logs')">
+        <div class="head">
+          <div class="ico violet"><i class="fas fa-robot"></i></div>
+          <div>
+            <div class="name">AI Bot Logs</div>
+            <div class="sub">prompts · feedback</div>
+          </div>
+        </div>
+        <p class="desc">AI assistant ke saath kis tarah ke questions aaye, success rate aur error logs.</p>
+        <span class="open">Open <i class="fas fa-arrow-right"></i></span>
+      </div>
+
+      <div class="feat-card" onclick="comingSoon('Site Settings')">
+        <div class="head">
+          <div class="ico green"><i class="fas fa-sliders"></i></div>
+          <div>
+            <div class="name">Site Settings</div>
+            <div class="sub">theme · meta · SEO</div>
+          </div>
+        </div>
+        <p class="desc">Site title, theme, OG tags, sitemap, aur global config yahan se control karo.</p>
+        <span class="open">Open <i class="fas fa-arrow-right"></i></span>
+      </div>
+    </div>
+
+    <!-- Activity Log -->
+    <h2 class="sec-title">
+      <i class="fas fa-clock-rotate-left"></i> Recent Activity
+      <span class="tag">/ live feed</span>
+    </h2>
+
+    <div class="log-card">
+      <div class="log-row">
+        <div class="dot green"><i class="fas fa-user-shield"></i></div>
+        <div class="body">
+          <div class="ttl">Admin session started</div>
+          <div class="sub" id="logSession">just now</div>
+        </div>
+        <div class="time">now</div>
+      </div>
+      <div class="log-row">
+        <div class="dot"><i class="fas fa-user-plus"></i></div>
+        <div class="body">
+          <div class="ttl">New member signed up via Google</div>
+          <div class="sub">user · firebase</div>
+        </div>
+        <div class="time">12m</div>
+      </div>
+      <div class="log-row">
+        <div class="dot blue"><i class="fas fa-pen-to-square"></i></div>
+        <div class="body">
+          <div class="ttl">Python course chapter 14 edited</div>
+          <div class="sub">course · python</div>
+        </div>
+        <div class="time">1h</div>
+      </div>
+      <div class="log-row">
+        <div class="dot gold"><i class="fas fa-bullhorn"></i></div>
+        <div class="body">
+          <div class="ttl">Announcement: "New AI bot beta is live"</div>
+          <div class="sub">announcement · global</div>
+        </div>
+        <div class="time">3h</div>
+      </div>
+      <div class="log-row">
+        <div class="dot"><i class="fas fa-shield-halved"></i></div>
+        <div class="body">
+          <div class="ttl">Security scan completed — 0 issues</div>
+          <div class="sub">system · automated</div>
+        </div>
+        <div class="time">6h</div>
+      </div>
+    </div>
+
+    <p class="foot">© Alone Monster Coding Hub · Admin Console · v1.0</p>
+  </main>
+
+  <!-- ===== Firebase (only used by admin_logout.js to also signOut, optional) ===== -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+  <!-- ===== Page Logic ===== -->
+  <script>
+    // ── Guard: only admins allowed ──────────────────────
+    (function () {
+      var ok = false;
+      try { ok = localStorage.getItem('am_admin_session') === '1'; } catch (_) {}
+      if (!ok) {
+        window.location.replace('login.html');
+      }
+    })();
+
+    // ── Session age ────────────────────────────────────
+    (function () {
+      try {
+        var since = parseInt(localStorage.getItem('am_admin_since') || '0', 10);
+        if (!since) return;
+        var ts = new Date(since);
+        document.getElementById('sinceLabel').textContent =
+          'Active since ' + ts.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+        document.getElementById('logSession').textContent =
+          'started at ' + ts.toLocaleString();
+      } catch (_) {}
+    })();
+
+    // ── Mock live stats (admin demo numbers) ───────────
+    (function () {
+      var mEl = document.getElementById('statMembers');
+      var vEl = document.getElementById('statViews');
+      var members = 1247;
+      var views = 8432;
+      var i = 0;
+      function tick() {
+        i++;
+        members += Math.floor(Math.random() * 3);
+        views += Math.floor(Math.random() * 17);
+        mEl.textContent = members.toLocaleString();
+        vEl.textContent = views.toLocaleString();
+      }
+      tick();
+      setInterval(tick, 4500);
+    })();
+
+    // ── Coming soon stub for feature cards ─────────────
+    function comingSoon(name) {
+      alert(name + ' module — coming soon for admins.');
+    }
+  </script>
+
+  <!-- ===== Admin Logout button auto-injector ===== -->
+  <script src="admin_logout.js"></script>
+</body>
+</html>
