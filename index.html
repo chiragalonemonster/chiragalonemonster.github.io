@@ -1559,5 +1559,15 @@ document.body.appendChild(document.getElementById('modelList'));
 </script>
 <!-- Admin logout button auto-injector (only shows when admin session active) -->
 <script src="admin_logout.js"></script>
+  <!-- PWA Service Worker -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then(() => console.log('SW registered'))
+        .catch(err => console.log('SW error:', err));
+    });
+  }
+</script>
 </body>
 </html>
